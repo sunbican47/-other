@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<input type="button" value="jsonp" onclick="jsonp_fun()"/>
+<script type="text/javascript">
+    function getResult(data){
+        alert("through jsonp,receive data from other domain : "+data.result);
+    }
+    function jsonp_fun(){
+        $.ajax({
+            url:'http://127.0.0.1:8080/chat/myhttpservlet',
+            type:'get',
+            data:{'name':'xiaofang'},
+            dataType: "jsonp",
+            jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+            jsonpCallback:"getResult",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以不写这个参数，jQuery会自动为你处理数据
+            success: function(data){
+            	alert("success");
+            },
+            error: function(){
+                alert('fail22');
+            }
+        });
+    }
+</script>
+
+</body>
+
+</html>

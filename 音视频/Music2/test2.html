@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+ <input type="button" value="jsonp" onclick="jsonp_fun()"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>		
+<!--<script type="text/javascript">
+function jsonp_fun(){
+	alert("test2");
+    $.ajax({
+        url:'http://192.168.2.131:8080/chat/Servlet.jsp',
+    type:'post',
+    dataType:'text',
+    success:function(data){
+        console.log(data);
+    }
+	});
+}
+</script>-->
+<!--<script type="text/javascript">
+    function jsonp_fun(){
+        $.ajax({
+            url:'http://192.168.2.131:8080/chat/Servlet.jsp',
+            type:'post',
+//          dataType:'text',
+			dataType:'jsonp',
+			jsonp:"getResult",
+            success:function(data){
+                console.info(data);
+            },
+            error:function(){
+            	console.error("fail")
+            }
+        });
+    }
+
+    function getResult(data){
+        alert(data.result);
+    }
+</script>-->
+<!--<script type="text/javascript" src="http://192.168.2.131:8080/chat/testJsonp.js"></script>-->
+<script type="text/javascript">
+    function getResult(data){
+        alert(data.result);
+    }
+</script>
+<script type="text/javascript" src="http://192.168.2.131:8080/chat/testJsonp.js"></script>
+<script type="text/javascript" src="http://192.168.2.131:8080/chat/others.jsp?params=fromjsonp&callback=getResult">"></script>
+</body>
+</html>

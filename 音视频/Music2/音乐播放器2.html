@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            margin: 0px auto;
+            background:url("../img/背景2.jpg") no-repeat;
+        }
+        #body{
+            width:600px;
+            height:588px;
+            margin: 0px auto;
+            border: pink solid 2px;
+        }
+        #musicFrame{
+            width:200px;
+            height: 500px;
+            border: pink solid 2px;
+            text-align:center;
+            float: left;
+            color:white;
+        }
+        #musicMenu{
+            width:200px;
+            height: 370px;
+            overflow:auto;
+        }
+        #musicGeci{
+            width:390px;
+            height: 500px;
+            border: pink solid 2px;
+            position:relative;
+            left:0;
+            top:0;
+            overflow:auto;
+        }
+        #audio{
+            float: right;
+            margin-right:6px;
+            margin-top:-12px;
+            vertical-align:bottom;
+        }
+        #currentMusic{
+            margin-left:6px;
+            float: left;
+            color:hotpink;
+            background-color:lightblue;
+            padding: 6px;
+            border-radius: 10px;
+       }
+        #yinLiang{
+            margin-left:333px;
+        }
+        #head_picture{
+            -webkit-border-radius: 50%;
+            -webkit-animation: rotation 12s linear infinite;
+        }
+        #head_picture:hover{
+            -webkit-animation-play-state:paused;
+        }
+        @-webkit-keyframes rotation{
+            from {-webkit-transform: rotate(0deg);}
+            to {-webkit-transform: rotate(360deg);}
+        }
+    </style>
+</head>
+<body>
+<div id="body">
+
+    <!-- 音乐歌单 -->
+    <div id="musicFrame">
+        <!--<canvas id="canvas" width="200" height="120"></canvas>-->
+        <img id="head_picture" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO86vChMKawyUdcGxYDBiH5uR4MQvLMraPI31Tp25MubZpYpYn2w" style="width:120px;height:120px;border:2px solid hotpink">
+        <div id="musicMenu"></div>
+    </div>
+    <!-- 音乐对应的歌词 -->
+    <div id="musicGeci">
+    </div>
+    <!-- 正在播放音乐的歌名，事件的控制 -->
+    <div>
+        <p id="currentMusic"></p>
+        <audio id="audio" controls="controls" autoplay="autoplay">
+            <source id="source" src="">
+        </audio>
+        <!--<p id="yinLiang">
+            <input id="volumn" style="width:222px;" type="range" placeholder="音量调节" value=range>
+        </p>
+-->    </div>
+
+</div>
+<div>
+    <input type="text" id="search_content" placeholder="搜索音乐人/歌名">
+    <input type="submit" id="search" value="搜索">
+</div>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<!--<script src="music2.js"></script>-->
+<!--<script src="yinbo.js"></script>
+<script src="getMusicWord.js"></script>-->
+<script>
+    var audio=document.getElementById("audio");
+    var source=document.getElementById("source");
+    var volumn=document.getElementById("volumn");
+    var getGeci="";
+    var nextMusic=0;
+    if($("#search_content").val()==""||$("#search_content").val().length==0) getLagouData("陈奕迅");
+    $("#search").click(function () {
+        $("#head_picture,#musicMenu,#musicGeci,#currentMusic,#menu_list").empty();
+        getLagouData($("#search_content").val());
+    })
+
+    function getLagouData(name){
+       var url =`https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=20&w=${name}&jsonpCallback=calls`;
+        $.ajax(url,{
+            dataType: 'jsonp',
+            crossDomain: true
+        });
+    }
+    var getData={};
+    function calls(data){
+    	        console.info("12321");
+        getData=data;
+        alert("：@#3");
+
+        console.info(getData);
+        console.info(data);
+        console.info(data.data.keyword);
+        console.info(data.data.song.list);
+        for(var m=0;m<data.data.song.list.length;m++){
+            $("#musicMenu").append("<p onclick='whichMusic("+m+")'>"+data.data.song.list[m].songname+"</p>");
+            if(m==0) all(m);
+        }
+
+    }
+    function all(num){
+    	alert(getData.data.song.list[num].songmid);
+//  	002B2EAA3brD5b
+        audio.load();//音频的加载
+        audio.play();//点击后自动播放
+        $("#currentMusic").html(getData.data.song.list[num].songname);
+//      source.src="http://ws.stream.qqmusic.qq.com/C100"+getData.data.song.list[num].songmid+".m4a?fromtag=0&guid=126548448.mp3";
+//source.src="http://157.255.154.160/amobile.music.tc.qq.com/C400"+getData.data.song.list[num].songmid+".m4a?guid=7121511632&vkey=6506B96A75E7BC42EAC1B8645C8F6B997EBC69B235E4BA704F99073AA8B36E24D2C640B3714322F440E6CF52976FC914C71699815DB0606E&uin=0&fromtag=66";
+
+source.src="http://157.255.154.160/amobile.music.tc.qq.com/C400002B2EAA3brD5b.m4a?guid=7121511632&vkey=6506B96A75E7BC42EAC1B8645C8F6B997EBC69B235E4BA704F99073AA8B36E24D2C640B3714322F440E6CF52976FC914C71699815DB0606E&uin=0&fromtag=66";
+        $("#head_picture").attr("src","https://y.gtimg.cn/music/photo_new/T002R300x300M000"+getData.data.song.list[num].albummid+".jpg?max_age=2592000");
+        $.ajax({
+            type:"get",
+            url:"https://route.showapi.com/213-2?showapi_appid=54411&showapi_sign=55b7ca99e210452a86269a9f09def34c&musicid="+getData.data.song.list[num].songmid,
+            dataType:"json",
+            success:function(json){
+                getGeci=json.showapi_res_body.lyric;
+                console.info(getGeci);
+                showGeci(num);
+            },
+            error:function(){
+                alert('getDataFail');
+            }
+        });
+    }
+    //点击播放的音乐
+    function whichMusic(num) {
+        nextMusic=num;
+        all(num);
+    }
+
+    //歌词的显示
+    function showGeci(index){
+        var arraysId=[];//用于记录每个P标签的id
+        $("#musicGeci").scrollTop(0);//每次更换歌曲后使歌词置上
+        var con = document.getElementById("musicGeci");
+        var lrc = getGeci;
+        var lrcArr = lrc.split("[");//从哪个字符开始，分隔成数组	"["			lrc.match(/^\[/)
+        var html = "";
+        for (var i = 1;i<lrcArr.length ;i++ )
+        {
+            var arr = lrcArr[i].split("]");//分隔歌词与时间
+            var time = arr[0].split(".");//分隔毫秒与其他时间
+            var timer = time[0].split(":");//分隔分钟与秒
+            var ms = timer[0]*60 + timer[1]*1;//转化为秒钟
+            //字符串类型乘以数字类型就会转化成为数字类型
+            var text = arr[1];//获取歌词部分
+            if (text!=""&&text!=null&&text.length>1){
+               html +="<p id="+ms+" style='width:390px;height:500px;'>"+text+"</p>";
+                arraysId[arraysId.length]=ms;
+            }
+            con.innerHTML = html;
+        }
+        var num = 0;
+        var move_distinct=0;
+        var oP = con.getElementsByTagName("p");//通过标签名获取所有p元素
+        //监听时间更改时间
+        audio.addEventListener("timeupdate",function(){
+            var curTime = parseInt(this.currentTime);//获取歌曲播放的时间 以秒为单位
+            if (document.getElementById(curTime))
+            {
+                for (var i = 0;i<oP.length ;i++)
+                {
+                    oP[i].style.cssText = "text-align:center;color:gray;font-size:14px;"//在播放下一句之前把所有的歌词样式还原
+                }
+                for(var z=0;z<arraysId.length;z++){
+                    if(curTime==arraysId[z]){
+                        move_distinct=z;
+                    }
+                }
+                //当前播放对应的歌词
+                document.getElementById(curTime).style.cssText = "text-align:center;color:greenyellow;font-size:18px;";
+                if(z<=5) $("#musicGeci").scrollTop(0);
+                if(z>5) $("#musicGeci").scrollTop((move_distinct-5)*32);//表示从第6个p标签开始滚动
+            }
+        });
+    }
+
+    //监听音乐播放结束
+    audio.addEventListener('ended', function () {
+        nextMusic++;
+        if (getData.data.song.list.length==nextMusic) nextMusic=0;
+        // alert(getData.data.song.list[nextMusic].songname);
+            all(nextMusic);
+    }, false);
+    //音量调节
+    volumn.onclick=function(){//音量调节
+        audio.volume=$("#volumn").val()/100;
+    }
+</script>
+</body>
+</html>

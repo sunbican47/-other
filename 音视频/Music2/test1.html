@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>测试1</div>
+<div>
+    <a class="btn" onclick="AjaxSubmit1();">点我</a>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+    function AjaxSubmit1() {
+        /*$.ajax({
+            url:'http://127.0.0.1:8080/chat/myhttpservlet',
+            type:'GET',
+            data:{'p':123},
+            dataType: "jsonp",
+            success:function (arg) {
+                alert("success");
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+            	console.warn(XMLHttpRequest,textStatus,errorThrown);
+            	console.info(XMLHttpRequest);
+            	alert(XMLHttpRequest);
+            }
+        })*/
+       function jsonpCallback() {  
+          alert("test");  
+         
+	    }  
+		$.ajax({
+            url:'http://127.0.0.1:8080/chat/myhttpservlet',
+            type:'GET',
+            data:{"name":"fang"},
+//          dataType: "jsonp",
+//          jsonp:"jsonpCallback",
+            success:function (data,testStatus) {
+                alert("success");
+                alert(data);
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+            	console.warn(XMLHttpRequest,textStatus,errorThrown);
+            	console.info(XMLHttpRequest);
+            	alert("fail");
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

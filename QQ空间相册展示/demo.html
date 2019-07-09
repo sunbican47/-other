@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <!--网站编码格式，UTF-8 国际编码，GBK或 gb2312 中文编码-->
+  <meta charset="UTF-8">
+  <meta name="Keywords" content="关键词一，关键词二">
+  <meta name="Description" content="网站描述内容">
+  <title>Document</title>
+  <!--引用css js 文件的引入-->
+<style type="text/css">
+*{margin:0px;padding:0px;}
+/*css样式表达方式：属性：值; 身高：1.7m； px像素*/
+#Main{width:1000px;/*宽*/ height:640px;/*高*/ /*background:#cc99cc;背景颜色*/
+	margin:30px auto 0px;}
+#Main ul li{width:288px;height:180px; border:4px solid #fff;/*粗细 风格 颜色边框*/ list-style-type:none;/*去掉前面的圆点*/ float:left;/*左浮动*/ margin:10px 17px;
+		box-shadow:5px 5px 10px #000; }
+.gray{width:100%; height:100%;background:rgba(0,0,0,0.6); position:fixed;/*固定定位*/ left:0px; top:0px; display:none;/*隐藏*/}
+
+.showImg{width:650px; height:406px; background:red; position:absolute;/*绝对定位*/
+			top:100px; left:400px; border:10px solid #fff; display:none;/*隐藏*/}
+.showImg img.but_l{position:absolute; top:170px; left:-70px;}
+.showImg img.but_r{position:absolute; top:170px; right:-70px;}
+
+</style>
+ </head>
+
+ <body>
+<!--div盒子模型，高度，宽度，放内容的长方形容器 姓名="代码女神"-->
+
+<!--图片列表开始-->
+<div id="Main">
+	<ul>
+		<li><img src="images/s1.jpg" bigsrc="images/big1.jpg"/></li>
+		<li><img src="images/s2.jpg" bigsrc="images/big2.jpg"/></li>
+		<li><img src="images/s3.jpg" bigsrc="images/big3.jpg"/></li>
+		<li><img src="images/s4.jpg" bigsrc="images/big4.jpg"/></li>
+		<li><img src="images/s5.jpg" bigsrc="images/big5.jpg"/></li>
+		<li><img src="images/s6.jpg" bigsrc="images/big6.jpg"/></li>
+		<li><img src="images/s7.jpg" bigsrc="images/big7.jpg"/></li>
+		<li><img src="images/s8.jpg" bigsrc="images/big8.jpg"/></li>
+		<li><img src="images/s9.jpg" bigsrc="images/big9.jpg"/></li>
+	</ul>
+</div>
+<!--图片列表结束-->
+
+<!--半透明的图层开始-->
+<div class="gray"></div>
+<!--半透明的图层结束-->
+
+<!--展示大图区开始-->
+<div class="showImg">
+	<img src="images/big1.jpg" class="show_bimg"/>
+
+	<img src="images/dirl.png" class="but_l"/>
+	<img src="images/dirr.png" class="but_r"/>
+</div>
+<!--展示大图区结束-->
+
+<!--引用jqｕｅｒｙ类库文件-->
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+ <script type="text/javascript">
+	var _index=0;
+	var bImg=null;
+	$("#Main ul li").click(function(){
+		_index=$(this).index();//获取序列号
+		//alert(_index);
+		$(".gray").show();
+		$(".showImg").show();//显示
+		bImg=$(this).find("img").attr("bigsrc");
+		//alert(bImg);
+		$(".showImg img.show_bimg").attr("src",bImg);
+
+	});
+
+	$(".gray").click(function(){
+		$(".gray").hide();//隐藏
+		$(".showImg").hide();
+	});
+
+	//点击右边切换按扭
+	$(".showImg img.but_r").click(function(){
+		_index++;// _index+1;
+		if(_index>8){_index=8; alert("右边到头了");}
+		bImg=$("#Main ul li").eq(_index).find("img").attr("bigsrc");
+		$(".showImg img.show_bimg").attr("src",bImg);
+
+	});
+
+	//点击左边切换按扭
+	$(".showImg img.but_l").click(function(){
+		_index--; //_index-1;
+		if(_index<0){_index=0;alert("左边到头了");}
+		bImg=$("#Main ul li").eq(_index).find("img").attr("bigsrc");
+		$(".showImg img.show_bimg").attr("src",bImg);
+	});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+<!--
+	1、如何在页面当中，构建一个有宽度，高度的长方形容器（div盒子模型）
+	2、讲到了外边距的概念( margin ),解决了外边距的兼容型问题 *{margin:0px;}
+	3、利用外边距的概念，控制长方形在水平方向距中，并且与上面有一定间距 margin:上(30px) 左右(auto) 下(0px);
+	4、讲到了ul无序列表标签（给每个li　添加宽度和高度，去掉　ｌｉ前面的圆点） 讲到了内边距的概念 padding，解决了内边距的兼容问题 *{padding:0px;}
+	5、讲到了浮动的概念（要使竖直方向的长方形（li）变成水平，给 li加上左浮动）float:left;
+	6、如何给页面当中的元素添加边框线　border:粗细(4px) 风格(solid) 颜色(#fff);
+	7、利用最新技术 html5+css3制作阴影效果  box-shadow:水平偏移 竖直偏移 半径 颜色;
+	8、如何在页面当中，插入一张图片  <img src ="地址" />
+	9、利用固定定位。来制作半透明的图层; 如何设置背景颜色的透明
+	10、利用绝对定位来制作我们大图展示区块 (position:absolute; left , top)
+
+-->
+ </body>
+
+</html>

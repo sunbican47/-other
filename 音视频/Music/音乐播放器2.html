@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            margin: 0px auto;
+        }
+        #body{
+            width:600px;
+            height:588px;
+            border: #50c4f1 solid 2px;
+        }
+        #musicFrame{
+            width:200px;
+            height: 500px;
+            border: #50c4f1 solid 2px;
+            text-align:center;
+            float: left;
+            background-color:pink;
+        }
+        #musicMenu{
+           width:200px;
+           height: 380px;
+           overflow:auto;
+        }
+        #musicGeci{
+            width:390px;
+            height: 500px;
+            border: #50c4f1 solid 2px; 
+            position:relative;
+			left:0;
+			top:0;
+        	background-color:goldenrod;
+        	overflow:auto;
+        }
+        #audio{
+        	float: right;
+        	margin-right:6px;
+        	margin-top:-12px;
+            vertical-align:bottom;
+        }
+        #currentMusic{
+            margin-left:6px;
+        	float: left;
+        }
+        #yinLiang{
+        	margin-left:333px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="body">
+	<!-- 音乐歌单 -->
+    <div id="musicFrame">
+    	<canvas id="canvas" width="200" height="120"></canvas>
+    	<div id="musicMenu"></div>
+    </div>
+    <!-- 音乐对应的歌词 -->
+    <div id="musicGeci">
+    </div>
+    <!-- 正在播放音乐的歌名，事件的控制 -->
+    <div>
+    	<p id="currentMusic"></p>
+	    <audio id="audio" controls="controls">//controls音频的控制 autoplay自动播放  ../MP3/Aimer%20(エメ)%20-%20六等星の夜%20(六等星之夜).mp3
+	        <source id="source" src="">
+	    </audio>
+	    <p id="yinLiang">
+    		<input id="volumn" style="width:222px;" type="range" placeholder="音量调节" value=range>
+    	</p>
+    </div>
+    
+</div>
+<script src="music2.js"></script>
+<script src="yinbo.js"></script>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+        var audio=document.getElementById("audio");
+        var source=document.getElementById("source");
+        var nextMusic=0;
+        for(var m=0;m<musicMenu.length;m++){
+            $("#musicMenu").append("<p onclick='whichMusic("+m+")'>"+musicMenu[m].musicName+"</p>");
+            if(m==0){//未选择歌曲时默认为第一首
+            	nextMusic=m+1;
+            	audio.load();//音频的加载
+            	$("#currentMusic").html(musicMenu[0].musicName);
+            	source.src=musicMenu[0].src;
+            	showGeci(m);
+            }
+        }
+        //歌词的显示
+        function showGeci(index){
+        	var arraysId=[];//用于记录每个P标签的id
+        	$("#musicGeci").scrollTop(0);//每次更换歌曲后使歌词置上
+        	var con = document.getElementById("musicGeci");
+    	    var lrc = musicMenu[index].geci;
+    		var lrcArr = lrc.split("[");//从哪个字符开始，分隔成数组	"["			lrc.match(/^\[/)
+    		var html = "";
+    		for (var i = 1;i<lrcArr.length ;i++ )
+    		{
+    			var arr = lrcArr[i].split("]");//分隔歌词与时间
+    			var time = arr[0].split(".");//分隔毫秒与其他时间
+    			var timer = time[0].split(":");//分隔分钟与秒
+    			var ms = timer[0]*60 + timer[1]*1;//转化为秒钟
+    			//字符串类型乘以数字类型就会转化成为数字类型
+    			var text = arr[1];//获取歌词部分
+    			if (text){
+    				html +="<p id="+ms+" style='width:390px;height:500px;'>"+text+"</p>";
+    				arraysId[arraysId.length]=ms;
+    			}
+    			con.innerHTML = html;
+    		} 
+    		var num = 0;
+    		var oP = con.getElementsByTagName("p");//通过标签名获取所有p元素
+    		
+    		audio.addEventListener("timeupdate",function(){//监听时间更改时间
+    			var curTime = parseInt(this.currentTime);//获取歌曲播放的时间 以秒为单位
+    			if (document.getElementById(curTime))
+    			{
+    				for (var i = 0;i<oP.length ;i++)
+    				{
+    					oP[i].style.cssText = "text-align:center;color:gray;font-size:14px;"//在播放下一句之前把所有的歌词样式还原
+    				}
+    				//当前播放对应的歌词
+    				document.getElementById(curTime).style.cssText = "text-align:center;color:greenyellow;font-size:18px;";
+    				var move_distinct=0;
+    				for (var i = 0;i<arraysId.length ;i++){
+    					if(arraysId[i]==curTime){//得出当前是第几个p标签
+    						move_distinct=i;
+    						break;
+    					}
+    				}
+    				if(move_distinct<=5) $("#musicGeci").scrollTop(0);
+    				if(move_distinct>5) $("#musicGeci").scrollTop((move_distinct-5)*32);//表示从第6个p标签开始滚动 
+    			}
+    		});
+        }
+        function whichMusic(num) {
+        	showGeci(num);
+        	nextMusic=num+1;
+        	if(musicMenu.length==nextMusic) nextMusic=0;
+            audio.load();
+            $("#currentMusic").html(musicMenu[num].musicName);
+            source.src=musicMenu[num].src;
+            audio.play();
+        }
+        volumn.onclick=function(){//音量调节
+        	audio.volume=$("#volumn").val()/100;
+        }
+        audio.addEventListener('ended', function () {
+        	if(nextMusic==0){//表示播放第一首音乐则停止
+        		audio.pause();
+        	}else{
+	            audio.load();
+	            showGeci(nextMusic);
+	            $("#currentMusic").html(musicMenu[nextMusic].musicName);
+	            source.src=musicMenu[nextMusic].src;
+	            audio.play();
+            }
+        }, false);
+</script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin:0;
+            padding:0;
+            border:0;
+        }
+        body{
+            background:url("../img/5.jpg") no-repeat;
+            background-size:100% 100%;
+            height:1000px;
+            margin:0px auto;
+        }
+		        #menu{
+            width:460px;
+            height:452px;
+            border: solid greenyellow 2px;
+       
+            overflow: auto;
+        }
+        #barrage_on_off{
+            color:red;
+            margin-left:310px;
+        }
+  
+        .barrage #show {
+            width:50%;
+            height:50%;
+            background:#000;
+            font-size: 24px;
+            color:red;
+            overflow: hidden;
+        }
+        .barrage #show div {
+            position:absolute;
+            right:0;
+        }
+        #barrage-txt {
+            width:500px;
+            line-height: 40px;
+            background-color:greenyellow;
+        }
+        #barrage-send {
+            width:177px;
+            line-height: 40px;
+            cursor:pointer;
+        }
+        .span_el{
+            position: absolute;
+            top:0px;
+            -webkit-transition:left 5s linear;
+            margin-left:200px;
+        }
+        ul{
+           margin-top:4px;
+        }
+        ul li{
+            color:yellowgreen;
+        }
+		#all{
+	 width:1200px;
+　　　　 border:1px solid red;
+        margin:0 auto;
+
+	}
+#menu,#menued{
+float:left;
+            border: solid greenyellow 2px;
+}
+		a{
+		color:#50c4f1;
+		font-size:14px;
+
+		padding:2px 3px;
+		text-decoration:none;
+		}
+    </style>
+
+</head>
+<body>
+<div id="all">
+<div id="menu">
+    <div id="menu_list">
+    </div>
+</div>
+<div id="menued">
+    <p >
+        <span id="barrage_on_off">隐藏弹幕</span>
+		           <a
+            href="http://sunbican.cn/music"
+            style="float:right"
+          >跳转到音乐</a>
+    </p>
+    <div class="barrage">
+        <video id="video1" controls width="680px" height="385px" autoplay="autoplay">
+            <source id="source" src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type='video/mp4'>
+        </video>
+        <div class="barrage">
+            <input type="text" id="barrage-txt" placeholder="请输入弹幕内容:">
+            <input type="button" id="barrage-send" value="发布评论">
+        </div>
+        <!-- 弹幕内容 -->
+        <div id="show">
+        </div>
+</div>
+</div>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+    	
+        var videoList = [{
+            sources: [{
+                src: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
+                type: 'video/mp4'
+            }],
+            poster: 'http://media.w3.org/2010/05/sintel/poster.png'
+        }, {
+            sources: [{
+                src: 'http://www.html5videoplayer.net/videos/toystory.mp4',
+                type: 'video/mp4'
+            }],
+            poster: 'http://www.videojs.com/img/poster.jpg'
+        }, {
+            sources: [{
+                src: 'http://media.w3.org/2010/05/video/movie_300.mp4',
+                type: 'video/mp4'
+            }],
+            poster: 'http://media.w3.org/2010/05/video/poster.png'
+        }];
+
+        for(var v=0;v<videoList.length;v++){
+            var current_video='video1'+v;
+            var current_li='li'+v;
+            var el_ul="<ul >"
+                +"<li >"
+                +"<video id='"+current_video+"' width='200px' height='120px' onclick='which_video("+v+")'>"
+                +"<source id='source' src='"+videoList[v].sources[0].src+"' type='video/mp4'>"
+                +"</video>"
+                +"</li>"
+                +"<li id='"+current_li+"' onclick='which_video("+v+")'></li>"
+                +"</ul>";
+            $("#menu_list").append(el_ul);
+            $("#"+current_video+">source").attr("src");
+            $("#"+current_li).html(videoList[v].sources[0].src);
+       }
+        function which_video(index){
+            save_content_arrays=[];
+            save_time_arrays=[];
+            save_map_arrays=[];
+            save_color_arrays=[];
+            $("#video1").attr("src",videoList[index].sources[0].src);
+        }
+		function ajaxMethod(content,time,map,color){
+			$.ajax({
+	            type: "post",
+	            url:"/barrage/come",
+	            data :{"content":content,"time":$("#sendContent").text(),"map":$("#validator").val(),"color":color},
+	        	dataType :'json',
+	        	success: function(data){
+	        		console.info("true="+data);
+	            },
+	            error: function(xhr,status,errMsg){
+	                console.error(xhr,status,errMsg);
+	            }
+	       });
+		}
+        var video1=document.getElementById("video1");
+        video1.mute
+        var show=document.getElementById("show");
+        var save_content_arrays=[]; //记录发送的内容
+        var save_time_arrays=[];    //记录发送内容的时间
+        var save_map_arrays=[];     //记录发送内容的位置
+        var save_color_arrays=[];   //记录发送内容的颜色
+        var random_color=["#3EF72A","#2FE0BF","#C932C6","#FC751B","#6E6EDD","#f00"];
+        $("#barrage-send").click(function(){
+            if(video1.currentTime>0&&video1.currentTime<video1.duration){
+                var current_content=$("#barrage-txt").val();
+                save_content_arrays[save_content_arrays.length]=current_content;
+                save_time_arrays[save_time_arrays.length]=video1.currentTime;
+                save_map_arrays[save_map_arrays.length]=(Math.floor(Math.random() * 10) * 32 + 20) + 'px';
+                save_color_arrays[save_color_arrays.length]=random_color[Math.floor(Math.random()*(random_color.length))];       
+                ajaxMethod(current_content,video1.currentTime,);
+            }
+        });
+        var dan_mu=true;
+        $("#barrage_on_off").click(function () {
+            if(dan_mu){
+                $("#show").hide();
+                $("#barrage_on_off").html("显示弹幕");
+                dan_mu=false;
+            }else{
+                $("#show").show();
+                $("#barrage_on_off").html("隐藏弹幕");
+                dan_mu=true;
+            }
+        });
+        setInterval(function () { //每两毫秒执行一次
+            if(video1.paused==false) {
+                for (var t = 0; t < save_time_arrays.length; t++) {
+                    if (save_time_arrays[t] <= video1.currentTime && save_time_arrays[t] >= (video1.currentTime - 0.2)) {//该时间段是否有发送的消息
+                        var text = document.createElement('span');
+                        text.className = 'span_el';
+                        text.style.top = save_map_arrays[t];
+                        text.innerHTML = save_content_arrays[t];
+                        text.style.color = save_color_arrays[t];
+                        show.appendChild(text);
+                        text.style.left =1240 - text.offsetWidth + 'px';
+                        text.style.width = "680px";
+                        text.style.left = 920 - text.offsetWidth + 'px';
+                        if(dan_mu==false) text.style.display = "none";
+                        setTimeout(function () {
+                            text.style.display = "none";
+                        },3000);
+                    }
+                }
+            }
+        },200);
+    </script>
+</body>
+</html>
